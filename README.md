@@ -4,20 +4,23 @@ A tool for markdown data loss prevention.
 
 ## Installation
 
-### Using Homebrew (Recommended for macOS)
+### Using pip (Recommended)
 
+```bash
+pip install md-dlp
+```
+
+### Using Homebrew (Coming Soon)
+
+> ⚠️ Homebrew installation is currently under development and not yet available. Please use pip installation for now.
+
+The following will be available once the Homebrew formula is ready:
 ```bash
 # Add the tap
 brew tap markshawn2020/tools
 
 # Install md-dlp
 brew install md-dlp
-```
-
-### Using pip
-
-```bash
-pip install md-dlp
 ```
 
 ## Usage
