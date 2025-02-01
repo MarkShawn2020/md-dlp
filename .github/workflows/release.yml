@@ -72,6 +72,10 @@ jobs:
             exit 1
           fi
           
+          # Update version and sha256
+          VERSION="${{ github.ref_name }}"
+          VERSION_WITHOUT_V="${VERSION#v}"
+          sed -i "s|url \".*\"|url \"https://github.com/markshawn2020/md-dlp/archive/${VERSION}.tar.gz\"|" Formula/md-dlp.rb
           sed -i "s/sha256 \".*\"/sha256 \"${{ steps.shasum.outputs.sha }}\"/" Formula/md-dlp.rb
           
           echo "Committing changes..."
