@@ -26,7 +26,10 @@ jobs:
         run: pip install build
 
       - name: Build package
-        run: python -m build
+        run: |
+          python -m build
+          echo "Checking dist directory contents:"
+          ls -la dist/
 
       - name: Create Release
         id: create_release
@@ -42,7 +45,10 @@ jobs:
       - name: Get SHA256
         id: shasum
         run: |
-          TARBALL_PATH="dist/md-dlp-${{ github.ref_name }}.tar.gz"
+          echo "Checking dist directory contents:"
+          ls -la dist/
+          TARBALL_PATH=$(ls dist/*.tar.gz | head -n 1)
+          echo "Found tarball: $TARBALL_PATH"
           echo "sha=$(sha256sum $TARBALL_PATH | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
 
       # 如果你有独立的 homebrew-tools 仓库，可以自动更新 Formula
