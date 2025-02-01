@@ -1,4 +1,3 @@
-# 源代码 (md_dlp.py):
 #!/usr/bin/env python3
 
 import argparse
@@ -32,9 +31,13 @@ source: {source}
 {content}
 """
 
-def fetch_and_save(url):
+def fetch_and_save(url, output_dir='.'):
     """
     从给定URL获取内容并保存为标准格式的markdown文件
+    
+    Args:
+        url: 要获取的URL
+        output_dir: 输出目录路径，默认为当前目录
     """
     # 添加基础URL前缀
     base_url = "https://r.jina.ai/"
@@ -56,11 +59,17 @@ def fetch_and_save(url):
         safe_title = re.sub(r'[/\\:*?"<>|]', '_', title)
         filename = f"{safe_title}.md"
 
+        # 确保输出目录存在
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 构建完整的文件路径
+        filepath = os.path.join(output_dir, filename)
+
         # 保存文件
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(md_content)
 
-        print(f"Content saved to: {filename}")
+        print(f"Content saved to: {filepath}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching content: {e}")
@@ -73,11 +82,23 @@ def main():
     parser = argparse.ArgumentParser(
         description='Download content and save as standard markdown file'
     )
+    # 先添加可选参数
+    parser.add_argument('-o', '--out',
+                       default='.',
+                       help='Output directory (default: current directory)')
+    # 再添加位置参数，使用 nargs=argparse.REMAINDER 来捕获所有剩余参数
     parser.add_argument('url',
+                       nargs=argparse.REMAINDER,
                        help='URL to fetch (will be prefixed with https://r.jina.ai/)')
 
     args = parser.parse_args()
-    fetch_and_save(args.url)
+    
+    # 将所有剩余参数合并为完整的 URL
+    url = ' '.join(args.url)
+    if not url:
+        parser.error('URL is required')
+        
+    fetch_and_save(url, args.out)
 
 if __name__ == "__main__":
     main()
