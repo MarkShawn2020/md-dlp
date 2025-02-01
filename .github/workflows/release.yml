@@ -1,0 +1,56 @@
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 触发条件：推送以 v 开头的标签，如 v1.0.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+      # 可选：如果你想自动更新 Homebrew Formula
+      - name: Get SHA256
+        id: shasum
+        run: |
+          TARBALL_PATH="dist/md-dlp-${{ github.ref_name }}.tar.gz"
+          echo "sha=$(sha256sum $TARBALL_PATH | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+
+      # 如果你有独立的 homebrew-tools 仓库，可以自动更新 Formula
+      - name: Update Homebrew Formula
+        if: steps.shasum.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git clone https://github.com/yourusername/homebrew-tools.git
+          cd homebrew-tools
+          sed -i "s/sha256 \".*\"/sha256 \"${{ steps.shasum.outputs.sha }}\"/" Formula/md-dlp.rb
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add Formula/md-dlp.rb
+          git commit -m "Update md-dlp to ${{ github.ref_name }}"
+          git push
