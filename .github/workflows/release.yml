@@ -6,6 +6,11 @@ on:
     tags:
       - 'v*' # 触发条件：推送以 v 开头的标签，如 v1.0.0
 
+# 添加权限配置
+permissions:
+  contents: write
+  discussions: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
