@@ -51,7 +51,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git clone https://github.com/markshawn2020/homebrew-tools.git
+          git clone https://${{ secrets.GH_TOKEN }}@github.com/markshawn2020/homebrew-tools.git
           cd homebrew-tools
           sed -i "s/sha256 \".*\"/sha256 \"${{ steps.shasum.outputs.sha }}\"/" Formula/md-dlp.rb
           git config user.name github-actions
