@@ -49,13 +49,28 @@ jobs:
       - name: Update Homebrew Formula
         if: steps.shasum.outcome == 'success'
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git clone https://${{ secrets.GH_TOKEN }}@github.com/markshawn2020/homebrew-tools.git
+          echo "Setting up git configuration..."
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          echo "Cloning repository..."
+          git clone "https://oauth2:${GITHUB_TOKEN}@github.com/markshawn2020/homebrew-tools.git"
+          
           cd homebrew-tools
+          
+          echo "Updating formula..."
+          if [ ! -f "Formula/md-dlp.rb" ]; then
+            echo "Error: Formula file not found"
+            exit 1
+          fi
+          
           sed -i "s/sha256 \".*\"/sha256 \"${{ steps.shasum.outputs.sha }}\"/" Formula/md-dlp.rb
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          
+          echo "Committing changes..."
           git add Formula/md-dlp.rb
           git commit -m "Update md-dlp to ${{ github.ref_name }}"
+          
+          echo "Pushing changes..."
           git push
