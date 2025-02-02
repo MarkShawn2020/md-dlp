@@ -4,6 +4,7 @@ import argparse
 import requests
 import re
 import os
+from md_dlp import __version__
 
 def extract_content(raw_content):
     """提取标题和内容"""
@@ -82,6 +83,10 @@ def main():
     parser = argparse.ArgumentParser(
         description='Download content and save as standard markdown file'
     )
+    parser.add_argument('-v', '--version',
+                       action='version',
+                       version=f'%(prog)s {__version__}',
+                       help='Show program version')
     parser.add_argument('-o', '--out',
                        default='.',
                        help='Output directory (default: current directory)')
