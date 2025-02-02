@@ -83,6 +83,11 @@ def main():
     parser = argparse.ArgumentParser(
         description='Download content and save as standard markdown file'
     )
+    # 必需参数
+    parser.add_argument('url',
+                       nargs='?',  # 使其可选
+                       help='URL to fetch')
+    # 可选参数
     parser.add_argument('-v', '--version',
                        action='version',
                        version=f'%(prog)s {__version__}',
@@ -90,10 +95,14 @@ def main():
     parser.add_argument('-o', '--out',
                        default='.',
                        help='Output directory (default: current directory)')
-    parser.add_argument('url',
-                       help='URL to fetch')
 
     args = parser.parse_args()
+    
+    # 如果没有提供 URL，且没有使用 -v/--version，则显示帮助
+    if not args.url:
+        parser.print_help()
+        exit(1)
+        
     fetch_and_save(args.url, args.out)
 
 if __name__ == "__main__":
