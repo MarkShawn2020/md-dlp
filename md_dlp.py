@@ -82,23 +82,14 @@ def main():
     parser = argparse.ArgumentParser(
         description='Download content and save as standard markdown file'
     )
-    # 先添加可选参数
     parser.add_argument('-o', '--out',
                        default='.',
                        help='Output directory (default: current directory)')
-    # 再添加位置参数，使用 nargs=argparse.REMAINDER 来捕获所有剩余参数
     parser.add_argument('url',
-                       nargs=argparse.REMAINDER,
-                       help='URL to fetch (will be prefixed with https://r.jina.ai/)')
+                       help='URL to fetch')
 
     args = parser.parse_args()
-    
-    # 将所有剩余参数合并为完整的 URL
-    url = ' '.join(args.url)
-    if not url:
-        parser.error('URL is required')
-        
-    fetch_and_save(url, args.out)
+    fetch_and_save(args.url, args.out)
 
 if __name__ == "__main__":
     main()

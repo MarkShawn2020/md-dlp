@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="md-dlp",
-    version="0.0.1",
+    version="0.0.2",
     author="MarkShawn",
     author_email="shawninjuly@gmail.com",
     description="A tool for markdown data loss prevention",
